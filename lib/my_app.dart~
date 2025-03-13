@@ -10,14 +10,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     ThemeController themeController = Get.put(ThemeController());
     return GetMaterialApp(
+
       debugShowCheckedModeBanner: false,
       routes: Routes.myRoutes,
       theme: ThemeData.light(), // Default theme
       darkTheme: ThemeData.dark(), // Dark theme
-      themeMode:
-          themeController.isDarkMode.value ? ThemeMode.dark : ThemeMode.light,
+      themeMode: themeController.isDarkMode.value ? ThemeMode.dark : ThemeMode.light,
+      
     );
   }
 }
