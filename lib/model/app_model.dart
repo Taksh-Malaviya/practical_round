@@ -1,3 +1,19 @@
+class MyFeedData {
+  Feed feed;
+
+  MyFeedData({
+    required this.feed,
+  });
+
+  factory MyFeedData.fromJson(Map<String, dynamic> json) => MyFeedData(
+        feed: Feed.fromJson(json["feed"]),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "feed": feed.toJson(),
+      };
+}
+
 class Feed {
   String title;
   String id;
@@ -21,27 +37,18 @@ class Feed {
     required this.results,
   });
 
-  // Ensure that all required fields are safely parsed
-  factory Feed.fromJson(Map<String, dynamic> json) {
-    return Feed(
-      title: json["title"] ?? "Unknown Title", // Default value if null
-      id: json["id"] ?? "Unknown ID", // Default value if null
-      author: json["author"] != null
-          ? Author.fromJson(json["author"])
-          : Author(name: "", url: ""), // Handle missing author
-      links: json["links"] != null
-          ? List<Link>.from(json["links"].map((x) => Link.fromJson(x)))
-          : [], // Handle missing links
-      copyright:
-          json["copyright"] ?? "Unknown Copyright", // Default value if null
-      country: json["country"] ?? "Unknown Country", // Default value if null
-      icon: json["icon"] ?? "", // Default value if null
-      updated: json["updated"] ?? "", // Default value if null
-      results: json["results"] != null
-          ? List<Result>.from(json["results"].map((x) => Result.fromJson(x)))
-          : [], // Handle missing results
-    );
-  }
+  factory Feed.fromJson(Map<String, dynamic> json) => Feed(
+        title: json["title"],
+        id: json["id"],
+        author: Author.fromJson(json["author"]),
+        links: List<Link>.from(json["links"].map((x) => Link.fromJson(x))),
+        copyright: json["copyright"],
+        country: json["country"],
+        icon: json["icon"],
+        updated: json["updated"],
+        results:
+            List<Result>.from(json["results"].map((x) => Result.fromJson(x))),
+      );
 
   Map<String, dynamic> toJson() => {
         "title": title,
@@ -65,12 +72,10 @@ class Author {
     required this.url,
   });
 
-  factory Author.fromJson(Map<String, dynamic> json) {
-    return Author(
-      name: json["name"] ?? "Unknown", // Default value if null
-      url: json["url"] ?? "", // Default value if null
-    );
-  }
+  factory Author.fromJson(Map<String, dynamic> json) => Author(
+        name: json["name"],
+        url: json["url"],
+      );
 
   Map<String, dynamic> toJson() => {
         "name": name,
@@ -85,11 +90,9 @@ class Link {
     required this.self,
   });
 
-  factory Link.fromJson(Map<String, dynamic> json) {
-    return Link(
-      self: json["self"] ?? "", // Default value if null
-    );
-  }
+  factory Link.fromJson(Map<String, dynamic> json) => Link(
+        self: json["self"],
+      );
 
   Map<String, dynamic> toJson() => {
         "self": self,
@@ -117,23 +120,16 @@ class Result {
     required this.url,
   });
 
-  factory Result.fromJson(Map<String, dynamic> json) {
-    return Result(
-      artistName:
-          json["artistName"] ?? "Unknown Artist", // Default value if null
-      id: json["id"] ?? "Unknown ID", // Default value if null
-      name: json["name"] ?? "Unknown Name", // Default value if null
-      releaseDate: json["releaseDate"] != null
-          ? DateTime.parse(json["releaseDate"])
-          : DateTime.now(), // Default value if null
-      kind: kindValues.map[json["kind"]] ?? Kind.APPS, // Handle missing kind
-      artworkUrl100: json["artworkUrl100"] ?? "", // Default value if null
-      genres: json["genres"] != null
-          ? List<Genre>.from(json["genres"].map((x) => Genre.fromJson(x)))
-          : [], // Handle missing genres
-      url: json["url"] ?? "", // Default value if null
-    );
-  }
+  factory Result.fromJson(Map<String, dynamic> json) => Result(
+        artistName: json["artistName"],
+        id: json["id"],
+        name: json["name"],
+        releaseDate: DateTime.parse(json["releaseDate"]),
+        kind: kindValues.map[json["kind"]]!,
+        artworkUrl100: json["artworkUrl100"],
+        genres: List<Genre>.from(json["genres"].map((x) => Genre.fromJson(x))),
+        url: json["url"],
+      );
 
   Map<String, dynamic> toJson() => {
         "artistName": artistName,
@@ -159,13 +155,11 @@ class Genre {
     required this.url,
   });
 
-  factory Genre.fromJson(Map<String, dynamic> json) {
-    return Genre(
-      genreId: json["genreId"] ?? "Unknown Genre ID", // Default value if null
-      name: json["name"] ?? "Unknown Genre", // Default value if null
-      url: json["url"] ?? "", // Default value if null
-    );
-  }
+  factory Genre.fromJson(Map<String, dynamic> json) => Genre(
+        genreId: json["genreId"],
+        name: json["name"],
+        url: json["url"],
+      );
 
   Map<String, dynamic> toJson() => {
         "genreId": genreId,

@@ -89,7 +89,7 @@ class _HomeState extends State<Home> {
             ),
           ),
           Divider(),
-          FutureBuilder<Feed?>(
+          FutureBuilder<MyFeedData?>(
             future: Apihalper.apihalper.getData(),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
@@ -98,14 +98,18 @@ class _HomeState extends State<Home> {
                   child: Text('Error: ${snapshot.error}'),
                 );
               } else if (snapshot.hasData) {
-                Feed? data = snapshot.data;
+                MyFeedData? data = snapshot.data;
 
-                if (data != null && data.results.isNotEmpty) {
+                log("=================================");
+                log("Data: ${data?.feed.results.length}");
+                log("=================================");
+
+                if (data != null && data.feed.results.isNotEmpty) {
                   return Expanded(
                     child: ListView.builder(
-                      itemCount: data.results.length,
+                      itemCount: data.feed.results.length,
                       itemBuilder: (context, index) {
-                        var result = data.results[index];
+                        var result = data.feed.results[index];
                         return ListTile(
                           leading: Image.network(result.artworkUrl100),
                           title: Text(result.name),
