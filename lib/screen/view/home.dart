@@ -2,6 +2,8 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
+import 'package:practical/controllers/api_controller.dart';
 import 'package:practical/model/app_model.dart';
 import 'package:practical/services/api.dart';
 
@@ -13,6 +15,13 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  APIController controller = Get.put(APIController());
+  @override
+  void initState() {
+    super.initState();
+    controller.getData();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,31 +66,41 @@ class _HomeState extends State<Home> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  height: 40,
-                  width: 120,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Center(
-                    child: Text(
-                      "Top Free",
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                GestureDetector(
+                  onTap: () {
+                    controller.getData();
+                  },
+                  child: Container(
+                    height: 40,
+                    width: 120,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Center(
+                      child: Text(
+                        "Top Free",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ),
                 ),
-                Container(
-                  height: 40,
-                  width: 120,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Center(
-                    child: Text(
-                      "Top Paid",
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                GestureDetector(
+                  onTap: () {
+                    controller.getPaidData();
+                  },
+                  child: Container(
+                    height: 40,
+                    width: 120,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Center(
+                      child: Text(
+                        "Top Paid",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ),
                 ),
@@ -89,48 +108,47 @@ class _HomeState extends State<Home> {
             ),
           ),
           Divider(),
-          FutureBuilder<MyFeedData?>(
-            future: Apihalper.apihalper.getData(),
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                log("Error: ${snapshot.error}");
-                return Center(
-                  child: Text('Error: ${snapshot.error}'),
-                );
-              } else if (snapshot.hasData) {
-                MyFeedData? data = snapshot.data;
-
-                log("=================================");
-                log("Data: ${data?.feed.results.length}");
-                log("=================================");
-
-                if (data != null && data.feed.results.isNotEmpty) {
-                  return Expanded(
-                    child: ListView.builder(
-                      itemCount: data.feed.results.length,
-                      itemBuilder: (context, index) {
-                        var result = data.feed.results[index];
-                        return ListTile(
-                          leading: Image.network(result.artworkUrl100),
-                          title: Text(result.name),
-                          subtitle: Text(result.artistName),
-                        );
-                      },
-                    ),
+          GetBuilder<APIController>(builder: (context) {
+            return FutureBuilder(
+              future: controller.allData,
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  log("Error: ${snapshot.error}");
+                  return Center(
+                    child: Text('Error: ${snapshot.error}'),
                   );
+                } else if (snapshot.hasData) {
+                  List<Result>? data = snapshot.data;
+
+                  if (data != null && data.isNotEmpty) {
+                    return Expanded(
+                      child: ListView.builder(
+                        itemCount: data.length,
+                        itemBuilder: (context, index) {
+                          var result = data[index];
+                          log(result.name);
+                          return ListTile(
+                            leading: Image.network(result.artworkUrl100),
+                            title: Text(result.name),
+                            subtitle: Text(result.artistName),
+                          );
+                        },
+                      ),
+                    );
+                  } else {
+                    log("Status Code: ${snapshot.connectionState}");
+                    return Center(
+                      child: Text('No data available'),
+                    );
+                  }
                 } else {
-                  log("Status Code: ${snapshot.connectionState}");
                   return Center(
                     child: Text('No data available'),
                   );
                 }
-              } else {
-                return Center(
-                  child: Text('No data available'),
-                );
-              }
-            },
-          ),
+              },
+            );
+          }),
         ],
       ),
     );
